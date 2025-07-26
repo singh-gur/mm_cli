@@ -15,7 +15,9 @@ def auth():
 
 @auth.command()
 @click.option("--email", prompt=True, help="Your MonarchMoney email")
-@click.option("--password", prompt=True, hide_input=True, help="Your MonarchMoney password")
+@click.option(
+    "--password", prompt=True, hide_input=True, help="Your MonarchMoney password"
+)
 def login(email, password):
     """Login to MonarchMoney and save authentication token"""
     try:
@@ -30,7 +32,7 @@ def login(email, password):
         click.echo("✓ Successfully logged in and saved token")
     except Exception as e:
         click.echo(f"✗ Login failed: {e}", err=True)
-        raise click.Abort()
+        raise click.Abort() from None
 
 
 @auth.command()

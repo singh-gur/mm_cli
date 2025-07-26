@@ -6,9 +6,9 @@ add *packages:
     @uv add {{ packages }}
 
 check:
-    @ruff check --fix
+    @.venv/bin/ruff check --fix
 
 sync *message:
     @git add .
-    @git commit -m "{{ message }}"
+    @git commit -am "{{ message }}"
     @git push
