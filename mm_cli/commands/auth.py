@@ -18,11 +18,11 @@ def auth():
 @click.option(
     "--password", prompt=True, hide_input=True, help="Your MonarchMoney password"
 )
-def login(email, password):
+async def login(email, password):
     """Login to MonarchMoney and save authentication token"""
     try:
         mm = MonarchMoney()
-        mm.login(email, password)
+        await mm.login(email, password)
 
         # Save token
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)

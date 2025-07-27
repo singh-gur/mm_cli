@@ -1,6 +1,6 @@
 import click
 
-from mm_cli.commands import auth, export
+from mm_cli.commands import add_commands
 
 
 @click.group()
@@ -10,5 +10,4 @@ def cli():
     pass
 
 
-cli.add_command(auth.auth)
-cli.add_command(export.export)
+add_commands(cli)

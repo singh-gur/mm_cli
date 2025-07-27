@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 import click
 
-from ..utils import write_csv, format_date
-from ..commands.auth import get_authenticated_client
+from mm_cli.utils import write_csv, format_date
+from mm_cli.commands.auth import get_authenticated_client
 
 
 @click.group()
