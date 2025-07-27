@@ -1,7 +1,61 @@
 import csv
+import asyncio
+import functools
 from typing import Any
 from pathlib import Path
 from datetime import datetime
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
+
+
+def run_sync[F: Callable[..., Any]](func: F) -> F:
+    """
+    Decorator that converts an async function to a sync function.
+
+    This decorator wraps an async function and runs it in an event loop,
+    making it behave like a synchronous function from the caller's perspective.
+
+    Args:
+        func: The async function to convert
+
+    Returns:
+        A synchronous wrapper function
+
+    Example:
+        @run_sync
+        async def my_async_function():
+            await asyncio.sleep(1)
+            return "Hello"
+
+        # Can now be called synchronously
+        result = my_async_function()
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            # Try to get the current event loop
+            asyncio.get_running_loop()
+        except RuntimeError:
+            # No event loop running, create a new one
+            return asyncio.run(func(*args, **kwargs))
+        else:
+            # Event loop is already running, we need to run in a thread
+
+            # Create a new event loop in a separate thread
+            def run_in_thread():
+                new_loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(new_loop)
+                try:
+                    return new_loop.run_until_complete(func(*args, **kwargs))
+                finally:
+                    new_loop.close()
+
+            with ThreadPoolExecutor() as executor:
+                future = executor.submit(run_in_thread)
+                return future.result()
+
+    return wrapper
 
 
 def write_csv(data: list[dict[str, Any]], filename: str, output_dir: str = ".") -> Path:

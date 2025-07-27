@@ -3,6 +3,8 @@ from pathlib import Path
 import click
 from monarchmoney import MonarchMoney
 
+from mm_cli.utils import run_sync
+
 CONFIG_DIR = Path.home() / ".config" / "mm-cli"
 TOKEN_FILE = CONFIG_DIR / "token"
 
@@ -18,6 +20,7 @@ def auth():
 @click.option(
     "--password", prompt=True, hide_input=True, help="Your MonarchMoney password"
 )
+@run_sync
 async def login(email, password):
     """Login to MonarchMoney and save authentication token"""
     try:
